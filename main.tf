@@ -1,7 +1,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "challenge"
+  name = var.stack_name
   cidr = "10.200.0.0/16"
 
   azs             = ["us-east-1a", "us-east-1b"]
@@ -15,48 +15,21 @@ module "vpc" {
   }
 }
 
-# Create role for ec2 instance
-resource "aws_iam_instance_profile" "web" {
-  name = "webserver"
-  role = aws_iam_role.web.name
-}
-
-resource "aws_iam_role" "web" {
-  name = "webserver_role"
-  path = "/"
-
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-               "Service": "ec2.amazonaws.com"
-            },
-            "Effect": "Allow",
-            "Sid": ""
-        }
-    ]
-}
-EOF
-}
-
 resource "aws_iam_policy_attachment" "ssm_core" {
-  name       = "ssm_core"
+  name       = "${var.stack_name}-ssm-core"
   roles      = [aws_iam_role.web.id]
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_policy_attachment" "ssm_role" {
-  name       = "ssm_role"
+  name       = "${var.stack_name}-ssm-role"
   roles      = [aws_iam_role.web.id]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
 # Create web security group
 resource "aws_security_group" "web" {
-  name        = "web-sg"
+  name        = "${var.stack_name}-web-sg"
   description = "Allow HTTP inbound traffic"
   vpc_id      = module.vpc.vpc_id
 
@@ -86,6 +59,7 @@ resource "aws_security_group_rule" "allow_http" {
 # Create webserver
 data "aws_ami" "ubuntu" {
   most_recent = true
+  owners = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
@@ -96,8 +70,6 @@ data "aws_ami" "ubuntu" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-
-  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_instance" "web" {
@@ -108,6 +80,7 @@ resource "aws_instance" "web" {
   vpc_security_group_ids = [ aws_security_group.web.id ]
 
   tags = {
-    Name = "challenge-webserver"
+    Name = "${var.stack_name}-webserver"
+    Purpose = "web"
   }
 }
