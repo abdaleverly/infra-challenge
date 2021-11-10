@@ -60,7 +60,8 @@ resource "aws_iam_role_policy" "build" {
       "Action": [
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
-        "logs:PutLogEvents"
+        "logs:PutLogEvents",
+        "kms:*"
       ]
     },
     {
@@ -121,7 +122,8 @@ data "aws_iam_policy_document" "pipeline" {
       "codedeploy:GetApplicationRevision",
       "codedeploy:GetDeployment",
       "codedeploy:GetDeploymentConfig",
-      "codedeploy:RegisterApplicationRevision"
+      "codedeploy:RegisterApplicationRevision",
+      "kms:*"
     ]
     resources = ["*"]
   }
