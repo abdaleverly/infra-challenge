@@ -61,7 +61,8 @@ resource "aws_iam_role_policy" "build" {
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents",
-        "kms:*"
+        "kms:*",
+        "codestar-connections:UseConnection"
       ]
     },
     {
