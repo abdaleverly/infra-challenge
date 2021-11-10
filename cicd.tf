@@ -118,7 +118,7 @@ resource "aws_codepipeline" "this" {
         ConnectionArn    = aws_codestarconnections_connection.github.arn
         FullRepositoryId = "abdaleverly/challenge-website"
         BranchName       = "master"
-        OutputArtifactFormat = "CODE_ZIP"
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }
   }
