@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "pipeline" {
     ]
     resources = [
       "${aws_s3_bucket.artifact.arn}", 
-      "${aws_s3_bucket.artifact.arn}/*" 
+      "${aws_s3_bucket.artifact.arn}/*"
     ]
   }
   statement {
@@ -106,6 +106,40 @@ data "aws_iam_policy_document" "pipeline" {
       "logs:PutLogEvents"
     ]
     resources = ["*"]
+  }
+  statement {
+    sid = "codestarpermissions"
+    actions = [
+      "codestar-connections:UseConnection"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    actions = [
+      "codedeploy:CreateDeployment",
+      "codedeploy:GetApplication",
+      "codedeploy:GetApplicationRevision",
+      "codedeploy:GetDeployment",
+      "codedeploy:GetDeploymentConfig",
+      "codedeploy:RegisterApplicationRevision"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    actions = [
+      "iam:PassRole"
+    ]
+    resources = ["*"]
+    condition {
+      test = "StringEqualsIfExists"
+      variable = "iam:PassedToService"
+      values = [
+        "cloudformation.amazonaws.com",
+        "elasticbeanstalk.amazonaws.com",
+        "ec2.amazonaws.com",
+        "ecs-tasks.amazonaws.com"
+      ]
+    }
   }
 }
 

@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_s3_bucket" "artifact" {
   bucket_prefix = "${var.stack_name}-artifact-"
   acl    = "private"
@@ -14,6 +16,28 @@ resource "aws_s3_bucket" "artifact" {
 
 resource "aws_kms_key" "key" {
   description = "pipeline encryption"
+  policy = <<-EOF
+  {
+    "Version": "2012-10-17",
+    "Id": "kms-key-policy",
+    "Statement": [
+      {
+        "Sid": "Enable IAM User Permission",
+        "Effect": "Allow",
+        "Principal": {"AWS": "arn:aws:iam::${data.aws_caller_identity.current.id}:root"},
+        "Action": "kms:*",
+        "Resource": "*"
+      },
+      {
+        "Sid": "AllowCodePipeline",
+        "Effect": "Allow",
+        "Action": "kms:*",
+        "Resource": "*",
+        "Principal": {"Service": "codepipeline.amazonaws.com"}
+      }
+    ]
+  }
+  EOF
 }
 
 resource "aws_codebuild_project" "web" {
@@ -94,6 +118,7 @@ resource "aws_codepipeline" "this" {
         ConnectionArn    = aws_codestarconnections_connection.github.arn
         FullRepositoryId = "abdaleverly/challenge-website"
         BranchName       = "master"
+        OutputArtifactFormat = "CODE_ZIP"
       }
     }
   }
