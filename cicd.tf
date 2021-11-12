@@ -84,6 +84,27 @@ resource "aws_codebuild_project" "web" {
   }
 }
 
+# CodeDeploy
+resource "aws_codedeploy_app" "web" {
+  compute_platform = "Server"
+  name             = "${var.stack_name}-web"
+}
+
+resource "aws_codedeploy_deployment_group" "web" {
+  deployment_group_name = "${var.stack_name}-deployment-group"
+  app_name = aws_codedeploy_app.web.name
+  service_role_arn = aws_iam_role.codedeploy.arn
+
+  ec2_tag_set {
+    ec2_tag_filter {
+      key = "Purpose"
+      type = "KEY_AND_VALUE"
+      value = "web"
+    }
+  }
+}
+
+# Codepipeline
 resource "aws_codestarconnections_connection" "github" {
   name          = "${var.stack_name}-connection"
   provider_type = "GitHub"
@@ -131,6 +152,7 @@ resource "aws_codepipeline" "this" {
       owner = "AWS"
       provider = "CodeBuild"
       input_artifacts = ["code"]
+      output_artifacts = ["build"]
       version = "1"
 
       configuration = {
@@ -138,8 +160,20 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-}
 
-# resource "aws_codepipeline_webhook" "challenge" {
-  
-# }
+  stage {
+    name = "Deploy"
+    action {
+      name = "Deploy"
+      category = "Deploy"
+      owner = "AWS"
+      provider = "CodeDeploy"
+      input_artifacts = ["build"]
+
+      configuration = {
+        ApplicationName = aws_codedeploy_app.web.name
+        DeploymentGroupName = aws_codedeploy_deployment_group.web.name
+      }
+    }
+  }
+}
