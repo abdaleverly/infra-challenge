@@ -78,6 +78,7 @@ resource "aws_instance" "web" {
   subnet_id = module.vpc.public_subnets[0]
   iam_instance_profile = aws_iam_instance_profile.web.id
   vpc_security_group_ids = [ aws_security_group.web.id ]
+  user_data = file("bootstrap.sh")
 
   tags = {
     Name = "${var.stack_name}-webserver"

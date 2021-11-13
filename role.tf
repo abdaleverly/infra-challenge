@@ -8,7 +8,7 @@ resource "aws_iam_role" "web" {
   name = "${var.stack_name}-webserver-role"
   path = "/"
 
-  assume_role_policy = <<EOF
+  assume_role_policy = <<POLICY
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -22,14 +22,35 @@ resource "aws_iam_role" "web" {
         }
     ]
 }
-EOF
+POLICY
+}
+
+resource "aws_iam_role_policy" "web" {
+  name = "${var.stack_name}-web-role"
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.artifact.arn}",
+        "${aws_s3_bucket.artifact.arn}/*"
+      ]
+    }
+  ]
+}
+POLICY
 }
 
 ## codebuild
 resource "aws_iam_role" "build" {
   name = "${var.stack_name}-build-role"
 
-  assume_role_policy = <<EOF
+  assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -42,7 +63,7 @@ resource "aws_iam_role" "build" {
     }
   ]
 }
-EOF
+POLICY
 }
 
 resource "aws_iam_role_policy" "build" {
@@ -84,7 +105,7 @@ POLICY
 resource "aws_iam_role" "codedeploy" {
   name = "${var.stack_name}-codedeploy-role"
 
-  assume_role_policy = <<EOF
+  assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -98,7 +119,42 @@ resource "aws_iam_role" "codedeploy" {
     }
   ]
 }
-EOF
+POLICY
+}
+
+resource "aws_iam_role_policy" "codedeploy" {
+  role = aws_iam_role.codedeploy.name
+
+  policy = <<-POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": [
+        "*"
+      ],
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "kms:*",
+        "codestar-connections:UseConnection"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.artifact.arn}",
+        "${aws_s3_bucket.artifact.arn}/*"
+      ]
+    }
+  ]
+}
+POLICY
 }
 
 resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
@@ -182,7 +238,7 @@ resource "aws_iam_role_policy" "pipeline" {
 resource "aws_iam_role" "pipeline" {
   name = "${var.stack_name}-pipeline-role"
 
-  assume_role_policy = <<EOF
+  assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -195,5 +251,5 @@ resource "aws_iam_role" "pipeline" {
     }
   ]
 }
-EOF
+POLICY
 }

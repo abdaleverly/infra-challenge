@@ -169,10 +169,11 @@ resource "aws_codepipeline" "this" {
       owner = "AWS"
       provider = "CodeDeploy"
       input_artifacts = ["build"]
+      version = "1"
 
       configuration = {
         ApplicationName = aws_codedeploy_app.web.name
-        DeploymentGroupName = aws_codedeploy_deployment_group.web.name
+        DeploymentGroupName = aws_codedeploy_deployment_group.web.deployment_group_name
       }
     }
   }
