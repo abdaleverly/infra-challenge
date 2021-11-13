@@ -2,6 +2,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 sudo apt update
+sudo apt install -y python3-pip awscli jq wget ruby
 
 # codedeploy
 export REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r ".region")
