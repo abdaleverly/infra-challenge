@@ -17,4 +17,4 @@ else
   rm -f /tmp/install
   exit 1
 fi
-service codedeploy-agent status
+systemctl status codedeploy-agent.service

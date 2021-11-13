@@ -35,6 +35,15 @@ resource "aws_iam_role_policy" "web" {
   "Statement": [
     {
       "Effect": "Allow",
+      "Resource": [
+        "*"
+      ],
+      "Action": [
+        "kms:*"
+      ]
+    },
+    {
+      "Effect": "Allow",
       "Action": [
         "s3:*"
       ],
