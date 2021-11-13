@@ -26,7 +26,9 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "web" {
-  name = "${var.stack_name}-web-role"
+  name = "${var.stack_name}-web-policy"
+  role = aws_iam_role.web.id
+
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -67,6 +69,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "build" {
+  name = "${var.stack_name}-build-policy"
   role = aws_iam_role.build.name
 
   policy = <<POLICY
@@ -123,6 +126,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy" "codedeploy" {
+  name = "${var.stack_name}-codedeploy-policy"
   role = aws_iam_role.codedeploy.name
 
   policy = <<-POLICY
@@ -230,6 +234,7 @@ data "aws_iam_policy_document" "pipeline" {
 }
 
 resource "aws_iam_role_policy" "pipeline" {
+  name = "${var.stack_name}-pipeline-policy"
   role = aws_iam_role.pipeline.name
 
   policy = data.aws_iam_policy_document.pipeline.json
