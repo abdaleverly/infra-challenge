@@ -17,7 +17,7 @@ backend:
 
 .PHONY: init
 init: backend
-	$(info checking prerequisites...)
+	$(info checking prerequisites...No error is a good thing)
 EXECUTABLES = aws terraform
 CHECK := $(foreach exec,$(EXECUTABLES),\
   $(if $(shell which $(exec)),All good,$(error "No $(exec) in PATH. See prerequisites section in README")))
@@ -30,6 +30,8 @@ build: init $(VARS)
 
 .PHONY: clean
 clean: backend $(VARS)
+	@echo "cleaning out artifacts"
+	aws s3 rm s3://$$(terraform output -raw artifact_bucket) --recursive
 	terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
 
 .PHONY: test

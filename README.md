@@ -1,11 +1,14 @@
 # EC2 Webserver powered by CICD pipeline
 ![Infrastructure diagram](images/infrastructure.png)
 
+This solution provisions a website hosted in AWS, that is powered by a GitHub repository. As application code is pushed to the remote git repository, the pipeline is triggered. The pipeline takes code from the source and passes it through a build stage and artifacts are generated. Finally a deploy stage takes deploys the build artifact to an ec2 instance opened to http traffic.
+
 ### Resources provisioned
+- VPC network
 - Codepipeline
 - CodeBuild
 - CodeDeploy
-- Codestar Connections
+- Codestar Connections (needs authorization to GitHub)
 - EC2 attached with an Elastic IP and Security Group
 - KMS key
 - IAM roles, policies and profiles
@@ -22,9 +25,9 @@ Navigate to `backend.tf` and `variables.tf` file and customize your values
 ### backend.tf 
 terraform {
   backend "s3" {
-    bucket = "${TF_S3_BACKEND_BUCKET_NAME}"
-    key    = "webserver"
-    region = "us-east-1"
+    bucket = "${TF_S3_BACKEND_BUCKET_NAME}" # <-- update
+    key    = "webserver" # <-- update
+    region = "us-east-1" # <-- update
   }
 }
 
@@ -51,7 +54,7 @@ When all resources are provisioned, you will have to connect `codestar-connectio
 - Go to the codestar connections dashboard here - https://console.aws.amazon.com/codesuite/settings/connections?region=us-east-1
 - Follow the instructions in this [document](https://docs.aws.amazon.com/codepipeline/latest/userguide/connections-github.html#connections-github-console) to link codestar to your GitHub account
 
-## Security Features Included?
+## Security Features Included
 - SSH port is not open on the webserver security group. To gain ssh access to the server, Connect using SSM's Session Manager
 - Pipeline and artifacts are encrypted with AWS KMS Customer Managed Key
 
@@ -59,7 +62,8 @@ When all resources are provisioned, you will have to connect `codestar-connectio
 To run smoke test to confirm app is deployed, run
 ```bash
 make test
-# If you want to test a particular version, then
+
+# If you want to check if a particular version is deployed, then
 SHORT_HASH_OR_TAG=v1.0.0 make test
 ```
 replace `v1.0` with git tag or short hash of released version
