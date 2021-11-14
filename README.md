@@ -35,7 +35,7 @@ terraform {
 
 ### variable.tf
 variable "allowed_http_cidrs" {
-  default = "" # <-- update
+  default = "0.0.0.0/0" # <-- update
 }
 variable "stack_name" {
   default = "challenge" # <-- update

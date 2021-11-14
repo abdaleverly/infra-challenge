@@ -1,5 +1,5 @@
 variable "allowed_http_cidrs" {
-  default = ""
+  default = "0.0.0.0/0"
 }
 
 variable "stack_name" {
