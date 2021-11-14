@@ -49,9 +49,11 @@ When all resources are provisioned, you will have to connect `codestar-connectio
 - Pipeline and artifacts are encrypted with AWS KMS Customer Managed Key
 
 ## Smoke Test
-To run smoke test to confirm app is deployed
+To run smoke test to confirm app is deployed, run
 ```bash
-SHORT_HASH_OR_TAG=v1.0 make test
+make test
+# If you want to test a particular version, then
+SHORT_HASH_OR_TAG=v1.0.0 make test
 ```
 replace `v1.0` with git tag or short hash of released version
 
@@ -67,3 +69,5 @@ make clean HTTP_CIDR=<Insert private cidr here>
 - Secure website with SSL certificate terminated on the Load Balancer
 - Reduce scope of IAM roles further
 - Enable [github advanced security](https://docs.github.com/en/code-security/secret-scanning/configuring-secret-scanning-for-your-repositories) to scan repository for secrets and vulnerabilities
+- Trigger a separate pipeline based on tagging to different environment (like production)
+- Add security stage to the pipeline to run test on code and on web endpoint

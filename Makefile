@@ -39,6 +39,8 @@ test:
 	if [ ! -z $(SHORT_HASH_OR_TAG) ]; then \
 		if [ "$${version}" = "$(SHORT_HASH_OR_TAG)" ]; then \
 			echo "SUCCESS"; \
+		else \
+			echo "$(SHORT_HASH_OR_TAG) NOT READY"; \
 		fi; \
 	else \
 		echo $${version}; \
