@@ -43,18 +43,22 @@ To validate prerequisites, run
 make init
 ```
 
-## Provision Infrastructure
-To customize your installation, update the `variables.tf` with your custom values
-To provision infrastructure, run
+## Provision and Setup the Infrastructure
+To customize your installation, update the `variables.tf` with your custom values. To provision the resources, run
 ```bash
 make build HTTP_CIDR=<Insert private cidr here>
 ```
+> The web_endpoint may take ~2 minutes to be available directly after provisioning. You can check the endpoint by retrieving the `$ make get-web-endpoint` and pasting in a browser.
 
-When all resources are provisioned, you will have to connect `codestar-connections` to your GitHub account. 
-- Go to the codestar connections dashboard here - https://console.aws.amazon.com/codesuite/settings/connections?region=us-east-1
-- Follow the instructions in this [document](https://docs.aws.amazon.com/codepipeline/latest/userguide/connections-github.html#connections-github-console) to link codestar to your GitHub account
+After all resources are provisioned for the first time, you will have to connect `AWS Codestar` to your GitHub account. 
+1. Go to the codestar connections dashboard here - https://console.aws.amazon.com/codesuite/settings/connections
+2. Choose the name of the pending connection you want to update. The *Update a pending connection* button is enabled when you choose a connection with a *Pending* status
+3. Click *Update a pending connection*
+4. On the *Connect to GitHub* page, under GitHub apps, for first time connections, click *Install a new app*. If you have already install AWS Codestar in GitHub, then choose app in search box.
+5. Go through the GitHub authorization steps and click *Install*
+6. the *Connect to GitHub* page, the connection ID will be available in the search, make sure its selected and click *Connect*
 
-## Security Features Included
+### Security Features Included
 - SSH port is not open on the webserver security group. To gain ssh access to the server, Connect using SSM's Session Manager
 - Pipeline and artifacts are encrypted with AWS KMS Customer Managed Key
 
@@ -74,11 +78,11 @@ To clean up resources
 make clean HTTP_CIDR=<Insert private cidr here>
 ```
 
-## Improvements
+## Improvements to Come
 - Make webserver architecture highly available
-- For reusability, make network diagram as module
-- Secure website with SSL certificate terminated on the Load Balancer
+- For reusability, refactor infastructure code into a module
+- Secure website with SSL certificate terminated (preferably terminate on the Load Balancer)
 - Reduce scope of IAM roles further
 - Enable [github advanced security](https://docs.github.com/en/code-security/secret-scanning/configuring-secret-scanning-for-your-repositories) to scan repository for secrets and vulnerabilities
 - Trigger a separate pipeline based on tagging to different environment (like production)
-- Add security stage to the pipeline to run test on code and on web endpoint
+- Add test and security stage to the pipeline to run test on code and on the web endpoint

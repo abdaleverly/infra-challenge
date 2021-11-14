@@ -28,11 +28,15 @@ build: init $(VARS)
 	terraform plan -out=tfplan -var=allowed_cidrs=$(HTTP_CIDR);
 	terraform apply "tfplan"
 
+.PHONY: get-web-endpoint
+get-web-endpoint:
+	@terraform output -raw web_endpoint
+
 .PHONY: clean
 clean: backend $(VARS)
 	@echo "cleaning out artifacts"
 	aws s3 rm s3://$$(terraform output -raw artifact_bucket) --recursive
-	terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
+# terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
 
 .PHONY: test
 test:
@@ -50,7 +54,8 @@ test:
 
 .PHONY: help
 help:
-	@echo "init:\tvalidate prerequisites"
-	@echo "build:\tprovisions and deploys resources"
-	@echo "clean:\tcleans up resources"
-	@echo "test:\tsmoke test web endpoint"
+	@echo "init:\t\t\tvalidate prerequisites"
+	@echo "build:\t\t\tprovisions and deploys resources"
+	@echo "get-web-endpoint:\toutput web endpoint"
+	@echo "clean:\t\t\tcleans up resources"
+	@echo "test:\t\t\tsmoke test web endpoint"
