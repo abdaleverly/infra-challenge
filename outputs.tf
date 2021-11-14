@@ -3,5 +3,5 @@ output "public_subnets" {
 }
 
 output "web_endpoint" {
-  value = aws_eip.web.public_dns
+  value = "http://${aws_eip.web.public_dns}"
 }

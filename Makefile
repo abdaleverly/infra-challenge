@@ -32,6 +32,18 @@ build: init $(VARS)
 clean: backend $(VARS)
 	terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
 
+.PHONY: test
+test:
+	@export ENDPOINT=$$(terraform output -raw web_endpoint); \
+	version=$$(curl -sS "$${ENDPOINT}/version" | jq -r '.version' 2> /dev/null || echo "NOT READY"); \
+	if [ ! -z $(SHORT_HASH_OR_TAG) ]; then \
+		if [ "$${version}" = "$(SHORT_HASH_OR_TAG)" ]; then \
+			echo "SUCCESS"; \
+		fi; \
+	else \
+		echo $${version}; \
+	fi
+
 .PHONY: help
 help:
 	@echo "init:\tvalidate prerequisites"
