@@ -8,6 +8,7 @@ module "vpc" {
   public_subnets  = ["10.200.101.0/24", "10.200.102.0/24"]
 
   enable_nat_gateway = false
+  map_public_ip_on_launch = false
 
   tags = {
     Terraform = "true"
@@ -84,4 +85,8 @@ resource "aws_instance" "web" {
     Name = "${var.stack_name}-webserver"
     Purpose = "web"
   }
+}
+
+resource "aws_eip" "web" {
+  instance = aws_instance.web.id
 }
