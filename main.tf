@@ -53,7 +53,7 @@ resource "aws_security_group_rule" "allow_http" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = [var.allowed_cidrs]
+  cidr_blocks       = [var.allowed_http_cidrs]
   security_group_id = aws_security_group.web.id
 }
 

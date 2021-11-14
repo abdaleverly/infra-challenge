@@ -18,14 +18,14 @@ backend:
 .PHONY: init
 init: backend
 	$(info checking prerequisites...No error is a good thing)
-EXECUTABLES = aws terraform
+EXECUTABLES = aws terraform jq
 CHECK := $(foreach exec,$(EXECUTABLES),\
   $(if $(shell which $(exec)),All good,$(error "No $(exec) in PATH. See prerequisites section in README")))
 
 .PHONY: build
-build: init $(VARS)
+build: init
 	terraform init
-	terraform plan -out=tfplan -var=allowed_cidrs=$(HTTP_CIDR);
+	terraform plan -out=tfplan
 	terraform apply "tfplan"
 
 .PHONY: get-web-endpoint
@@ -33,10 +33,10 @@ get-web-endpoint:
 	@terraform output -raw web_endpoint
 
 .PHONY: clean
-clean: backend $(VARS)
+clean: backend
 	@echo "cleaning out artifacts"
 	aws s3 rm s3://$$(terraform output -raw artifact_bucket) --recursive
-	terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
+	terraform destroy
 
 .PHONY: test
 test:

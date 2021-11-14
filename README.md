@@ -14,10 +14,12 @@ This solution provisions a website hosted in AWS, that is powered by a GitHub re
 - IAM roles, policies and profiles
 
 ## Prerequisites
+- An AWS account
 - Configure awscli to your account
 - Create an AWS S3 bucket to store backend state
 - Terraform version 1.0
 - GitHub Account hosting web code
+- `jq` for smoke testing
 
 ## Customize your copy of the Infrastructure Code
 Navigate to `backend.tf` and `variables.tf` file and customize your values.
@@ -32,7 +34,9 @@ terraform {
 }
 
 ### variable.tf
-...
+variable "allowed_http_cidrs" {
+  default = "" # <-- update
+}
 variable "stack_name" {
   default = "challenge" # <-- update
 }
@@ -52,7 +56,7 @@ make init
 ## Provision and Setup the Infrastructure
 To provision the resources, run
 ```bash
-make build HTTP_CIDR=<Insert private cidr here>
+make build
 ```
 > The web_endpoint may take ~2 minutes to be available directly after provisioning. You can check the endpoint by retrieving the `$ make get-web-endpoint` and pasting in a browser.
 
