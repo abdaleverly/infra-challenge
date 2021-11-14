@@ -5,7 +5,7 @@ This solution provisions a website hosted in AWS, that is powered by a GitHub re
 
 ### Resources provisioned
 - VPC network
-- Codepipeline
+- CodePipeline
 - CodeBuild
 - CodeDeploy
 - Codestar Connections (needs authorization to GitHub)
@@ -47,6 +47,7 @@ variable "github_app_repository_name" {
   default = "" # <-- update
 }
 ```
+> For a sample github application, you can fork https://github.com/abdaleverly/challenge-website
 
 To validate prerequisites, run
 ```bash
@@ -65,9 +66,12 @@ After all resources are provisioned for the first time, you will have to connect
 2. Choose the name of the pending connection you want to update. The **Update pending connection** button is enabled when you choose a connection with a *Pending* status
 3. Click **Update pending connection**
 4. For first time connections, authorize AWS Connector to GitHub
-5. On the **Connect to GitHub** page, under GitHub apps, if you have already installed AWS Connector in GitHub apps, then choose your Github app id in search box and skip to the end. If this is your first time, click **Install a new app**.
-6. Click **Install** when GitHub prompts you
-7. The *Connect to GitHub* page, the connection ID will be available in the search, make sure its selected and click *Connect*
+5. On the **Connect to GitHub** page, under GitHub apps, if you have already installed AWS Connector in GitHub apps, then choose your Github app id in search box and skip to the end. If this is your first time, click **Install a new app**. and click **Install** when GitHub prompts you
+7. On the *Connect to GitHub* page, the connection ID will be available in the search, select and click **Connect**
+
+---
+> The first pipeline run will fail because codestar-connection was not setup at the time, but thats OK. Now, you have gone through the above steps, you can push a change and watch the pipeline run in the CodePipeline dashboard on this [link](https://console.aws.amazon.com/codesuite/codepipeline/pipelines)
+
 
 ### Security Features Included
 - SSH port is not open on the webserver security group. To gain ssh access to the server, Connect using SSM's Session Manager
@@ -79,14 +83,13 @@ To run smoke test to confirm app is deployed, run
 make test
 
 # If you want to check if a particular version is deployed, then
-SHORT_HASH_OR_TAG=v1.0.0 make test
+SHORT_HASH_OR_TAG=v1.0.0 make test # replace `v1.0.0` with git tag or 7 xter git hash
 ```
-replace `v1.0` with git tag or short hash of released version
 
 ## Clean Up
 To clean up resources
 ```bash
-make clean HTTP_CIDR=<Insert private cidr here>
+make clean
 ```
 
 ## Upcoming improvements
