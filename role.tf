@@ -213,6 +213,7 @@ data "aws_iam_policy_document" "pipeline" {
     resources = ["*"]
   }
   statement {
+    sid = "codedeploypermissions"
     actions = [
       "codedeploy:CreateDeployment",
       "codedeploy:GetApplication",
@@ -223,22 +224,6 @@ data "aws_iam_policy_document" "pipeline" {
       "kms:*"
     ]
     resources = ["*"]
-  }
-  statement {
-    actions = [
-      "iam:PassRole"
-    ]
-    resources = ["*"]
-    condition {
-      test = "StringEqualsIfExists"
-      variable = "iam:PassedToService"
-      values = [
-        "cloudformation.amazonaws.com",
-        "elasticbeanstalk.amazonaws.com",
-        "ec2.amazonaws.com",
-        "ecs-tasks.amazonaws.com"
-      ]
-    }
   }
 }
 

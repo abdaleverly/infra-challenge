@@ -17,14 +17,21 @@
 - GitHub Account hosting web code
 
 ## Initialize Infrastructure Code
-Navigate to `backend.tf` file and customize your values
+Navigate to `backend.tf` and `variables.tf` file and customize your values
 ```bash
+### backend.tf 
 terraform {
   backend "s3" {
     bucket = "${TF_S3_BACKEND_BUCKET_NAME}"
     key    = "webserver"
     region = "us-east-1"
   }
+}
+
+### variable.tf
+...
+variable "stack_name" {
+  default = "challenge" # <-- update
 }
 ```
 

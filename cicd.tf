@@ -69,8 +69,7 @@ resource "aws_codebuild_project" "web" {
 
   source {
     type            = "CODEPIPELINE"
-    location        = var.git_url
-    git_clone_depth = 1
+    git_clone_depth = 0
 
     git_submodules_config {
       fetch_submodules = true
