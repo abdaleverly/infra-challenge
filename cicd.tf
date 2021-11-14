@@ -136,7 +136,7 @@ resource "aws_codepipeline" "this" {
 
       configuration = {
         ConnectionArn    = aws_codestarconnections_connection.github.arn
-        FullRepositoryId = "abdaleverly/challenge-website"
+        FullRepositoryId = "${var.github_org_name}/${var.github_app_repository_name}"
         BranchName       = "master"
         OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }

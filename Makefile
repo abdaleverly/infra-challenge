@@ -36,7 +36,7 @@ get-web-endpoint:
 clean: backend $(VARS)
 	@echo "cleaning out artifacts"
 	aws s3 rm s3://$$(terraform output -raw artifact_bucket) --recursive
-# terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
+	terraform destroy -var=allowed_cidrs=$(HTTP_CIDR);
 
 .PHONY: test
 test:
