@@ -51,3 +51,4 @@ help:
 	@echo "init:\tvalidate prerequisites"
 	@echo "build:\tprovisions and deploys resources"
 	@echo "clean:\tcleans up resources"
+	@echo "test:\tsmoke test web endpoint"
